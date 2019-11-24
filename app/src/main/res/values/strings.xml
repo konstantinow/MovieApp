@@ -1,3 +1,7 @@
 <resources>
     <string name="app_name">MovieApp</string>
+    <string name="api_key_movie_db" translatable="false">bed8d240223b5a7278f0550bdcbea600</string>
+    <string name="error_network">Network is not available</string>
+    <string name="error_unnamed">Something went wrong</string>
+    <string name="list_is_empty">Movie list is empty</string>
 </resources>
