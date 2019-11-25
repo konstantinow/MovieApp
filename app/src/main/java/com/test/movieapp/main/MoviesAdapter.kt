@@ -45,7 +45,10 @@ class MoviesAdapter :
             title.text = item.title
             overview.text = item.overview
             if (item.pictureUrl != null) {
-                Glide.with(itemView.context).load(item.pictureUrl).into(picture)
+                Glide.with(itemView.context)
+                    .load(item.pictureUrl)
+                    .fitCenter()
+                    .into(picture)
             }
         }
     }

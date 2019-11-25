@@ -16,5 +16,6 @@ interface MovieApi {
             get() = "bed8d240223b5a7278f0550bdcbea600"
         val BASE_IMAGE_URL: String
             get() = "https://image.tmdb.org/t/p/w500"
+        val START_PAGE: Int get() = 1
     }
 }

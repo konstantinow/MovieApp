@@ -1,9 +1,7 @@
 package com.test.movieapp.main
 
 import com.arellomobile.mvp.MvpView
-import com.arellomobile.mvp.viewstate.strategy.AddToEndSingleStrategy
-import com.arellomobile.mvp.viewstate.strategy.SkipStrategy
-import com.arellomobile.mvp.viewstate.strategy.StateStrategyType
+import com.arellomobile.mvp.viewstate.strategy.*
 
 
 interface IMainView : MvpView {
@@ -13,7 +11,10 @@ interface IMainView : MvpView {
     @StateStrategyType(AddToEndSingleStrategy::class)
     fun hideProgress()
 
-    @StateStrategyType(AddToEndSingleStrategy::class)
+    @StateStrategyType(SingleStateStrategy::class)
+    fun setItems(data: List<MovieData>)
+
+    @StateStrategyType(AddToEndStrategy::class)
     fun showNewItems(data: List<MovieData>)
 
     @StateStrategyType(SkipStrategy::class)

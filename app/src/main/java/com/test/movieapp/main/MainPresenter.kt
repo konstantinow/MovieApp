@@ -20,6 +20,7 @@ class MainPresenter @Inject constructor(
     private var mNetworkDisposable: Disposable? = null
     private var mMovieApiDisposable: Disposable? = null
     private var mIsNetworkAvailable = false
+    private var mIsLoadingNextPage = false
 
     override fun onFirstViewAttach() {
         super.onFirstViewAttach()
@@ -52,13 +53,19 @@ class MainPresenter @Inject constructor(
             viewState.showError(IMainView.State.ERROR_NETWORK_UNAVAILABLE)
             return
         }
+        viewState.showMainProgress()
+        mMainModel.resetPageCount()
         mMovieApiDisposable?.dispose()
         mMovieApiDisposable = mMainModel.getMovies()
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
             .subscribe({
+                if (it.isEmpty()) {
+                    viewState.showError(IMainView.State.LIST_IS_EMPTY)
+                    return@subscribe
+                }
                 viewState.hideProgress()
-                viewState.showNewItems(it)
+                viewState.setItems(it)
             }, {
                 it.printStackTrace()
                 viewState.hideProgress()
@@ -66,20 +73,26 @@ class MainPresenter @Inject constructor(
             })
     }
 
-    private fun onPageScrolled() {
+    fun onPageScrolled() {
+        if (mIsLoadingNextPage) {
+            return
+        }
         if (!mIsNetworkAvailable) {
             viewState.hideProgress()
             viewState.showError(IMainView.State.ERROR_NETWORK_UNAVAILABLE)
             return
         }
+        mIsLoadingNextPage = true
         mMovieApiDisposable?.dispose()
         mMovieApiDisposable = mMainModel.getNextMovies()
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
             .subscribe({
+                mIsLoadingNextPage = false
                 viewState.hideProgress()
                 viewState.showNewItems(it)
             }, {
+                mIsLoadingNextPage = false
                 it.printStackTrace()
                 viewState.hideProgress()
                 viewState.showError(IMainView.State.ERROR_UNDEFINED)
@@ -92,7 +105,6 @@ class MainPresenter @Inject constructor(
             viewState.showError(IMainView.State.ERROR_NETWORK_UNAVAILABLE)
             return
         }
-        mMainModel.resetPageCount()
         getData()
     }
 
